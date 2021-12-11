@@ -1,0 +1,52 @@
+- id: spizarnia_parter_drzwi_on_off
+  alias:  Spizarnia - Światło Drzwi
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.mi_door_spizarnia_contact
+    platform: state
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.mi_door_spizarnia_contact
+        state: 'on'
+      - condition: state
+        entity_id: light.spizarnia
+        state: 'off'
+      sequence:
+      - entity_id: light.spizarnia
+        service: light.turn_on
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.mi_door_spizarnia_contact
+        state: 'off'
+      - condition: state
+        entity_id: light.spizarnia
+        state: 'on'
+      sequence:
+      - entity_id: light.spizarnia
+        service: light.turn_off
+  mode: single
+
+- id: spizarnia__off_5min
+  alias: Spizarnia - Wyłącz po 5min
+  description: ''
+  trigger:
+  - entity_id: light.spizarnia
+    platform: state
+    from: 'off'
+    to: 'on'
+    for:
+      minutes: 5
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: light.spizarnia
+        state: 'on'
+      sequence:
+      - entity_id: light.spizarnia
+        service: light.turn_off
+  mode: single

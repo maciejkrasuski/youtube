@@ -1,0 +1,99 @@
+- id: lazienka_parter_drzwi_on_off
+  alias: Łazienka Parter - Światło Drzwi
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.mi_door_lazienka_parter_contact
+    platform: state
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.mi_door_lazienka_parter_contact
+        state: 'on'
+      - condition: state
+        entity_id: light.lazienka_parter
+        state: 'off'
+      sequence:
+      - entity_id: light.lazienka_parter
+        service: light.turn_on
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.mi_door_lazienka_parter_contact
+        state: 'on'
+      - condition: state
+        entity_id: light.lazienka_parter
+        state: 'on'
+      sequence:
+      - entity_id: light.lazienka_parter
+        service: light.turn_off
+    default:
+      - delay: 00:00:01
+  mode: single
+
+
+- id: lazienka_parter_open_door_off
+  alias: Łazienka Parter - Otwarte drzwi wyłącz 2 min
+  description: ''
+  trigger:
+  - entity_id: light.lazienka_parter
+    platform: state
+    from: 'off'
+    to: 'on'
+    for:
+      minutes: 2
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.mi_door_lazienka_parter_contact
+        state: 'on'
+      - condition: state
+        entity_id: light.lazienka_parter
+        state: 'on'
+      sequence:
+      - entity_id: light.lazienka_parter
+        service: light.turn_off
+  mode: single
+
+- id: lazienka_parter_closed_door_off
+  alias: Łazienka Parter - Zamkniete drzwi wyłącz 15 min
+  description: ''
+  trigger:
+  - entity_id: light.lazienka_parter
+    platform: state
+    from: 'off'
+    to: 'on'
+    for:
+      minutes: 15
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.mi_door_lazienka_parter_contact
+        state: 'off'
+      - condition: state
+        entity_id: light.lazienka_parter
+        state: 'on'
+      sequence:
+      - entity_id: light.lazienka_parter
+        service: light.turn_off
+  mode: single
+
+
+- id: lazienka_parter_wylacz_automatyzacje_5s
+  alias:  Łazienka Parter - Wyłącz automat na 5s
+  description: ''
+  trigger:
+    - platform: mqtt
+      topic: "boneIO-1/input/P8_12/oneClick"
+  condition: []
+  action:
+    - entity_id: automation.swiatlo_lazienka_parter
+      service: automation.turn_off
+    - delay: 0:00:05
+    - entity_id: automation.swiatlo_lazienka_parter
+      service: automation.turn_on
+  mode: restart
